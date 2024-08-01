@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./javascript.js"></script>
+</head>
+<body>
+    <div class="sec">
+            <h1>Expense Tracker</h1>
+            <input type="text" id="name">
+            <input id="amount">
+            <select id="category">
+                <option>none</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Rent">Rent</option>
+            </select>    
+            <input type="date" id="date">
+            <button id="add" onclick=addTrans()>Add Expense</button>
+            <table>
+                <tr>
+                    <th>Expense Name</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                <tbody id="tran"></tbody>
+            </table>
+            <h3>Total : $ <span id="tot">00.00</span></h3>
+            <label>Filter by category :</label>
+            <select id="category">
+                <option>none</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Rent">Rent</option>
+            </select> 
+     </div>
+</body>
+<script>
+    function addTrans(){
+    var name=document.getElementById("name").value;
+    var amount=parseInt(document.getElementById("amount").value);
+    var category=document.getElementById('category').value;
+    var Date=document.getElementById("date").value;
+    var tran=document.getElementById("tran");
+    
+    const row1=document.createElement('tr');
+    row1.innerHTML=`<td>${name}</td><td>${amount}</td><td>${category}</td><td>${Date}</td><td><button class="alt" id='btn1'>Edit</button> <button class="del" id='btn'>Delete</button></td>`;
+    tran.appendChild(row1);
+
+    row1.querySelector("#btn").addEventListener('click',()=>{
+        row1.remove();
+    });    
+        row1.querySelector("#btn1").addEventListener('click',()=>{
+            row1.inert();
+        });    
+   
+
+    document.getElementById("tot").innerHTML=amount;
+}
+</script>
+</html>

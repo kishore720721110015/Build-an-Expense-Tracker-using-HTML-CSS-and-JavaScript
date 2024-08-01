@@ -1,0 +1,37 @@
+.sec{
+        max-width: 650px;
+        margin: 120px auto;
+        border-radius: 10px;
+        text-align: center;
+}
+table{
+    margin-top: 15px;
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}   
+th,td{
+    border: 1px solid black;
+    padding: 5px 0px;
+}  
+button{
+    background-color: rgb(97, 196, 97);
+    color: white;
+    border-radius: 3px;
+    padding: 5px;
+}
+button:hover{
+    background-color: green;
+}
+input{
+    padding: 5px 0px;
+}
+select{
+    padding: 5px 0px;
+}
+h3{
+    margin-left: 460px;
+}
+label{
+    margin-left: 410px;
+}
