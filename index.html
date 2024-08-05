@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="./style.css">
-    <script src="./javascript.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="sec">
-            <h1>Expense Tracker</h1>
-            <input type="text" id="name">
-            <input id="amount">
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <div class="content">
+            <input type="text" id="expenseName" placeholder="Expense Name">
+            <input type="number" id="amount" placeholder="Amount">
             <select id="category">
-                <option>none</option>
+                <option value="" disabled selected>Choose one</option>
                 <option value="Food">Food</option>
                 <option value="Transport">Transport</option>
-                <option value="Rent">Rent</option>
-            </select>    
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
             <input type="date" id="date">
-            <button id="add" onclick=addTrans()>Add Expense</button>
-            <table>
+            <button id="addExpense">Add Expense</button>
+        </div>
+        <table>
+            <thead>
                 <tr>
                     <th>Expense Name</th>
                     <th>Amount</th>
@@ -28,39 +31,120 @@
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
-                <tbody id="tran"></tbody>
-            </table>
-            <h3>Total : $ <span id="tot">00.00</span></h3>
-            <label>Filter by category :</label>
-            <select id="category">
-                <option>none</option>
+            </thead>
+            <tbody id="expense-table-body">
+            </tbody>
+        </table>
+        <div class="section">
+        <div class="total">
+            <span>Total: $<span id="total-amount">0.00</span></span>
+        </div>
+        <div class="filter">
+            <label>Filter by Category:</label>
+            <select id="filter">
+                <option value="All">All</option>
                 <option value="Food">Food</option>
                 <option value="Transport">Transport</option>
-                <option value="Rent">Rent</option>
-            </select> 
-     </div>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+    </div>
+    </div>
+    <script src="./script.js"></script>
 </body>
-<script>
-    function addTrans(){
-    var name=document.getElementById("name").value;
-    var amount=parseInt(document.getElementById("amount").value);
-    var category=document.getElementById('category').value;
-    var Date=document.getElementById("date").value;
-    var tran=document.getElementById("tran");
-    
-    const row1=document.createElement('tr');
-    row1.innerHTML=`<td>${name}</td><td>${amount}</td><td>${category}</td><td>${Date}</td><td><button class="alt" id='btn1'>Edit</button> <button class="del" id='btn'>Delete</button></td>`;
-    tran.appendChild(row1);
+ <script>
+    document.getElementById('addExpense').addEventListener('click', addExpense);
+        document.getElementById('filter').addEventListener('change', filterExpenses);
 
-    row1.querySelector("#btn").addEventListener('click',()=>{
-        row1.remove();
-    });    
-        row1.querySelector("#btn1").addEventListener('click',()=>{
-            row1.inert();
-        });    
-   
+        let expenses = [];
+        let editId = null;
 
-    document.getElementById("tot").innerHTML=amount;
-}
-</script>
+        function addExpense() {
+            const expenseName = document.getElementById('expenseName').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+            const date = document.getElementById('date').value;
+
+            if (!expenseName || isNaN(amount) || !category || !date) {
+                alert('Please fill out all fields correctly.');
+                return;
+            }
+
+            if (editId !== null) {
+                const expense = expenses.find(exp => exp.id === editId);
+                expense.name = expenseName;
+                expense.amount = amount;
+                expense.category = category;
+                expense.date = date;
+                editId = null;
+            } else {
+                const expense = {
+                    name: expenseName,
+                    amount: amount,
+                    category: category,
+                    date: date,
+                    id: Date.now()
+                };
+                expenses.push(expense);
+            }
+
+            renderExpenses();
+            calculateTotal();
+            clearInputs();
+        }
+
+        function renderExpenses(filteredExpenses = expenses) {
+            const tbody = document.getElementById('expense-table-body');
+            tbody.innerHTML = '';
+
+            filteredExpenses.forEach(expense => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${expense.name}</td>
+                    <td>$${expense.amount.toFixed(2)}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.date}</td>
+                    <td>
+                        <button class="btn" onclick="editExpense(${expense.id})">Edit</button>
+                        <button class="btn" onclick="deleteExpense(${expense.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calculateTotal() {
+            const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+        }
+
+        function deleteExpense(id) {
+            expenses = expenses.filter(expense => expense.id !== id);
+            renderExpenses();
+            calculateTotal();
+        }
+
+        function editExpense(id) {
+            const expense = expenses.find(exp => exp.id === id);
+            document.getElementById('expenseName').value = expense.name;
+            document.getElementById('amount').value = expense.amount;
+            document.getElementById('category').value = expense.category;
+            document.getElementById('date').value = expense.date;
+            editId = id;
+        }
+
+        function clearInputs() {
+            document.getElementById('expenseName').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('category').value = '';
+            document.getElementById('date').value = '';
+        }
+
+        function filterExpenses() {
+            const filter = document.getElementById('filter').value;
+            const filteredExpenses = filter === 'All' ? expenses : expenses.filter(expense => expense.category === filter);
+            renderExpenses(filteredExpenses);
+        }
+ </script>
 </html>
